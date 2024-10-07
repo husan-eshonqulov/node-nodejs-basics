@@ -1,6 +1,21 @@
+import { fork } from 'node:child_process';
+import path from 'node:path';
+
+const childPath = path.resolve('.', 'files', 'script.js');
+
 const spawnChildProcess = async (args) => {
-    // Write your code here
+  const child = fork(childPath, args);
+  child.on('message', (message) => {
+    console.log(`Received from child:`, message);
+  });
+
+  child.on('error', (error) => {
+    console.error(`Error from child process:`, error);
+  });
+
+  child.on('exit', (code) => {
+    console.log(`Child process exited with code ${code}`);
+  });
 };
 
-// Put your arguments in function call to test this functionality
-spawnChildProcess( /* [someArgument1, someArgument2, ...] */);
+spawnChildProcess([1, 2, 3]);
